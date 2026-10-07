@@ -6,6 +6,13 @@
 
     <div class="card-body">
 
+        <?php if (isset($_SESSION['flash_message'])): ?>
+            <div class="alert alert-success" role="alert">
+                <?= htmlspecialchars($_SESSION['flash_message'], ENT_QUOTES, 'UTF-8') ?>
+            </div>
+            <?php unset($_SESSION['flash_message']); ?>
+        <?php endif; ?>
+
         <h3>Selamat Datang di Sistem Informasi Akademik</h3>
 
         <p>

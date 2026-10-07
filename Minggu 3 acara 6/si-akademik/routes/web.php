@@ -9,6 +9,11 @@ $routes = [
             'index'
         ],
 
+        '/dashboard' => [
+            'HomeController',
+            'index'
+        ],
+
         '/login' => [
             'AuthController',
             'loginForm'

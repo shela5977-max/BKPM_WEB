@@ -1,13 +1,17 @@
 <?php
 
+session_name('SI_AKADEMIK_MINGGU4_ACARA8');
 session_start();
 
 function app_url($path = '')
 {
-    $basePath = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
-    $path = ltrim($path, '/');
+    $scriptName = str_replace('\\', '/', rawurldecode($_SERVER['SCRIPT_NAME']));
+    $basePath = rtrim(str_replace('\\', '/', dirname($scriptName)), '/');
+    $basePath = $basePath === '.' ? '' : $basePath;
+    $basePath = implode('/', array_map('rawurlencode', explode('/', $basePath)));
+    $path = implode('/', array_map('rawurlencode', explode('/', trim($path, '/'))));
 
-    return $basePath . ($path === '' ? '/' : '/' . $path);
+    return $basePath . '/' . $path;
 }
 
 require_once __DIR__ . '/../routes/web.php';
@@ -28,9 +32,9 @@ $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
 $uri = rawurldecode($uri);
 
-$base = dirname($_SERVER['SCRIPT_NAME']);
+$base = str_replace('\\', '/', rawurldecode(dirname($_SERVER['SCRIPT_NAME'])));
 
-if ($base !== '/' && str_starts_with($uri, $base)) {
+if ($base !== '/' && $base !== '.' && $base !== '' && str_starts_with($uri, $base)) {
     $uri = substr($uri, strlen($base));
 }
 
@@ -47,6 +51,7 @@ $method = $_SERVER['REQUEST_METHOD'];
 */
 
 if (
+    $uri === '/' ||
     str_starts_with($uri, '/mahasiswa') ||
     str_starts_with($uri, '/prodi') ||
     str_starts_with($uri, '/matakuliah')

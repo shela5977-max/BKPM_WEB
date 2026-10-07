@@ -17,12 +17,12 @@ class AuthController
             $password === 'admin123'
         ) {
 
+            session_regenerate_id(true);
             $_SESSION['logged_in'] = true;
             $_SESSION['user_name'] = 'Admin';
+            $_SESSION['flash_message'] = 'Selamat datang, Admin';
 
-            header(
-                'Location: /Minggu%203%20acara%206/si-akademik/public/'
-            );
+            header('Location: ' . $this->basePath() . '/dashboard');
             exit;
         }
 
@@ -35,12 +35,20 @@ class AuthController
 
     public function logout()
     {
-        session_destroy();
+        $_SESSION = [];
+        $_SESSION['flash_message'] = 'Anda telah logout';
 
-        header(
-            'Location: /Minggu%203%20acara%206/si-akademik/public/login'
-        );
+        header('Location: ' . $this->basePath() . '/login');
 
         exit;
+    }
+
+    private function basePath(): string
+    {
+        if (defined('APP_BASE_PATH')) {
+            return (string) constant('APP_BASE_PATH');
+        }
+
+        return '';
     }
 }

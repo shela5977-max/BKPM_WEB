@@ -14,7 +14,10 @@ $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
 $uri = rawurldecode($uri);
 
-$base = dirname($_SERVER['SCRIPT_NAME']);
+$base = rtrim(str_replace('\\', '/', rawurldecode(dirname($_SERVER['SCRIPT_NAME']))), '/');
+
+$basePath = implode('/', array_map('rawurlencode', explode('/', $base)));
+define('APP_BASE_PATH', $basePath);
 
 if ($base !== '/' && str_starts_with($uri, $base)) {
     $uri = substr($uri, strlen($base));
@@ -32,7 +35,11 @@ $method = $_SERVER['REQUEST_METHOD'];
 |--------------------------------------------------------------------------
 */
 
-if (str_starts_with($uri, '/mahasiswa')) {
+if (
+    $uri === '/' ||
+    $uri === '/dashboard' ||
+    str_starts_with($uri, '/mahasiswa')
+) {
 
     $middleware = new AuthMiddleware();
 

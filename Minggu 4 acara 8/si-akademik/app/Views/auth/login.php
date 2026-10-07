@@ -26,8 +26,8 @@
 
                 <div class="card-body">
 
-                    <form method="POST"
-                          action="/Minggu%204%20acara%208/si-akademik/public/login">
+                      <form method="POST"
+                          action="<?= app_url('login') ?>">
 
                         <div class="mb-3">
                             <label class="form-label">

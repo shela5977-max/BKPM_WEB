@@ -9,9 +9,7 @@ class AuthMiddleware
             $_SESSION['logged_in'] !== true
         ) {
 
-            header(
-                'Location: /Minggu%204%20acara%208/si-akademik/public/login'
-            );
+            header('Location: ' . app_url('login'));
 
             exit;
         }

@@ -26,8 +26,15 @@
 
                 <div class="card-body">
 
+                    <?php if (isset($_SESSION['flash_message'])): ?>
+                        <div class="alert alert-success" role="alert">
+                            <?= htmlspecialchars($_SESSION['flash_message'], ENT_QUOTES, 'UTF-8') ?>
+                        </div>
+                        <?php unset($_SESSION['flash_message']); ?>
+                    <?php endif; ?>
+
                     <form method="POST"
-                          action="/Minggu%203%20acara%206/si-akademik/public/login">
+                          action="<?= APP_BASE_PATH ?>/login">
 
                         <div class="mb-3">
 

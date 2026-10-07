@@ -9,11 +9,18 @@ class AuthMiddleware
             $_SESSION['logged_in'] !== true
         ) {
 
-            header(
-                'Location: /Minggu%203%20acara%206/si-akademik/public/login'
-            );
+            header('Location: ' . $this->basePath() . '/login');
 
             exit;
         }
+    }
+
+    private function basePath(): string
+    {
+        if (defined('APP_BASE_PATH')) {
+            return (string) constant('APP_BASE_PATH');
+        }
+
+        return '';
     }
 }
