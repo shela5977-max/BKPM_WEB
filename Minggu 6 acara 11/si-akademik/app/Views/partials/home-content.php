@@ -6,7 +6,7 @@
 
     <div class="card-body">
 
-        <h3>Selamat Datang di Sistem Informasi Akademik</h3>
+       <h3>Dashboard Utama Sistem Akademik</h3>
 
         <p>
             Halo,
