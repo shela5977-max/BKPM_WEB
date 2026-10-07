@@ -6,7 +6,7 @@
 
     <div class="card-body">
 
-        <h3>Selamat Datang di Sistem Informasi Akademik</h3>
+        <h3>Dashboard Branch Fitur Conflict</h3>
 
         <p>
             Halo,
