@@ -1,0 +1,659 @@
+openapi: 3.0.0
+info:
+  title: API Sistem Informasi Akademik (MVC)
+  description: |
+    Dokumentasi REST API untuk proyek Workshop SI Web Server.
+    Endpoint disusun berdasarkan Router dan Controller pada proyek Acara 21.
+    Endpoint Mahasiswa untuk POST, PUT, dan DELETE memerlukan Bearer JWT.
+    Endpoint Buku dan endpoint Auth bersifat publik.
+  version: 1.0.0
+
+servers:
+  - url: http://localhost/BKPM_WEB/Minggu%2011%20acara%2021
+    description: Server lokal Laragon
+
+tags:
+  - name: Auth
+    description: Registrasi dan autentikasi pengguna
+  - name: Mahasiswa
+    description: Pengelolaan data mahasiswa
+  - name: Buku
+    description: Pengelolaan data buku
+
+paths:
+  /register:
+    post:
+      tags: [Auth]
+      summary: Registrasi pengguna
+      description: Membuat akun pengguna baru. Password disimpan dalam bentuk hash.
+      operationId: registerUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+            example:
+              username: andi
+              email: andi@example.com
+              password: rahasia123
+      responses:
+        '201':
+          description: Registrasi berhasil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessEnvelope'
+              example:
+                success: true
+                message: Registrasi berhasil
+                data:
+                  id: "1"
+                errors: []
+                timestamp: "2026-11-17T09:00:00+07:00"
+        '400':
+          description: Body JSON tidak valid atau field wajib kosong
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '409':
+          description: Username atau email sudah terdaftar
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '422':
+          description: Format email tidak valid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '500':
+          description: Kesalahan server atau database
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+
+  /login:
+    post:
+      tags: [Auth]
+      summary: Login pengguna
+      description: Memeriksa username dan password lalu menghasilkan JWT yang berlaku 300 detik.
+      operationId: loginUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+            example:
+              username: andi
+              password: rahasia123
+      responses:
+        '200':
+          description: Login berhasil dan token JWT diterbitkan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginEnvelope'
+              example:
+                success: true
+                message: Login berhasil
+                data:
+                  token: "<JWT_TOKEN>"
+                  role: user
+                  expires_in: 300
+                errors: []
+                timestamp: "2026-11-17T09:00:00+07:00"
+        '400':
+          description: Body JSON tidak valid atau username/password kosong
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Username atau password salah
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '500':
+          description: Kesalahan server atau database
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+
+  /mahasiswa:
+    get:
+      tags: [Mahasiswa]
+      summary: Mengambil data mahasiswa
+      description: Mengambil seluruh data mahasiswa atau satu mahasiswa jika parameter id diberikan.
+      operationId: getMahasiswa
+      parameters:
+        - $ref: '#/components/parameters/IdQuery'
+      responses:
+        '200':
+          description: Data mahasiswa berhasil diambil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessEnvelope'
+              example:
+                success: true
+                message: Data berhasil diambil
+                data:
+                  id: 1
+                  nim: E41230001
+                  nama: Andi Pratama
+                  email: andi@example.com
+                  prodi_id: 1
+                  angkatan: 2023
+                errors: []
+                timestamp: "2026-11-17T09:00:00+07:00"
+        '404':
+          description: Mahasiswa dengan id tersebut tidak ditemukan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '500':
+          description: Kesalahan server atau database
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+
+    post:
+      tags: [Mahasiswa]
+      summary: Menambahkan data mahasiswa
+      description: Menambahkan mahasiswa baru. Memerlukan JWT. NIM harus 9 karakter, email valid, dan prodi_id harus tersedia.
+      operationId: createMahasiswa
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MahasiswaRequest'
+            example:
+              nim: E41230002
+              nama: Ingka Jivanda
+              email: ingka.api@example.com
+              prodi_id: 1
+              angkatan: 2023
+      responses:
+        '201':
+          description: Data mahasiswa berhasil ditambahkan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessEnvelope'
+              example:
+                success: true
+                message: Data berhasil ditambahkan
+                data:
+                  id: "16"
+                errors: []
+                timestamp: "2026-11-17T09:00:00+07:00"
+        '400':
+          description: Body JSON tidak valid atau field wajib kosong
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Token tidak ditemukan, tidak valid, atau kedaluwarsa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '409':
+          description: NIM sudah terdaftar
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '422':
+          description: Format NIM, email, prodi_id, angkatan, atau program studi tidak valid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '500':
+          description: Kesalahan server atau database
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+
+    put:
+      tags: [Mahasiswa]
+      summary: Memperbarui data mahasiswa
+      description: Memperbarui data berdasarkan id pada query string. Memerlukan JWT.
+      operationId: updateMahasiswa
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/IdQueryRequired'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MahasiswaRequest'
+            example:
+              nim: E41230002
+              nama: Ingka Jivanda Revisi
+              email: ingka.api@example.com
+              prodi_id: 1
+              angkatan: 2023
+      responses:
+        '200':
+          description: Data mahasiswa berhasil diperbarui
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessEnvelope'
+        '400':
+          description: Body JSON tidak valid atau field wajib kosong
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Token tidak ditemukan, tidak valid, atau kedaluwarsa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Mahasiswa tidak ditemukan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '409':
+          description: NIM sudah digunakan mahasiswa lain
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '422':
+          description: Format data tidak valid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '500':
+          description: Kesalahan server atau database
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+
+    delete:
+      tags: [Mahasiswa]
+      summary: Menghapus data mahasiswa
+      description: Menghapus mahasiswa berdasarkan id pada query string. Memerlukan JWT.
+      operationId: deleteMahasiswa
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/IdQueryRequired'
+      responses:
+        '200':
+          description: Data mahasiswa berhasil dihapus
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessEnvelope'
+        '401':
+          description: Token tidak ditemukan, tidak valid, atau kedaluwarsa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Mahasiswa tidak ditemukan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '500':
+          description: Kesalahan server atau database
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+
+  /buku:
+    get:
+      tags: [Buku]
+      summary: Mengambil data buku
+      description: Mengambil seluruh data buku atau satu buku jika parameter id diberikan.
+      operationId: getBuku
+      parameters:
+        - $ref: '#/components/parameters/IdQuery'
+      responses:
+        '200':
+          description: Data buku berhasil diambil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessEnvelope'
+              example:
+                success: true
+                message: Data berhasil diambil
+                data:
+                  id: 1
+                  judul: Pemrograman Web
+                  penulis: Budi Santoso
+                  tahun_terbit: 2024
+                errors: []
+                timestamp: "2026-11-17T09:00:00+07:00"
+        '404':
+          description: Buku tidak ditemukan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '500':
+          description: Kesalahan server atau database
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+
+    post:
+      tags: [Buku]
+      summary: Menambahkan data buku
+      description: Menambahkan buku baru. Endpoint ini bersifat publik pada implementasi Acara 21.
+      operationId: createBuku
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BukuRequest'
+            example:
+              judul: Pemrograman Web
+              penulis: Budi Santoso
+              tahun_terbit: 2024
+      responses:
+        '201':
+          description: Data buku berhasil ditambahkan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessEnvelope'
+        '400':
+          description: Body JSON tidak valid atau field wajib kosong
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '422':
+          description: Tahun terbit tidak valid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '500':
+          description: Kesalahan server atau database
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+
+    put:
+      tags: [Buku]
+      summary: Memperbarui data buku
+      description: Memperbarui data buku berdasarkan id pada query string. Endpoint ini bersifat publik.
+      operationId: updateBuku
+      parameters:
+        - $ref: '#/components/parameters/IdQueryRequired'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BukuRequest'
+            example:
+              judul: Pemrograman Web Lanjutan
+              penulis: Budi Santoso
+              tahun_terbit: 2025
+      responses:
+        '200':
+          description: Data buku berhasil diperbarui
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessEnvelope'
+        '400':
+          description: Body JSON tidak valid atau field wajib kosong
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Buku tidak ditemukan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '422':
+          description: Tahun terbit tidak valid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '500':
+          description: Kesalahan server atau database
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+
+    delete:
+      tags: [Buku]
+      summary: Menghapus data buku
+      description: Menghapus buku berdasarkan id pada query string. Endpoint ini bersifat publik.
+      operationId: deleteBuku
+      parameters:
+        - $ref: '#/components/parameters/IdQueryRequired'
+      responses:
+        '200':
+          description: Data buku berhasil dihapus
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessEnvelope'
+        '404':
+          description: Buku tidak ditemukan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '500':
+          description: Kesalahan server atau database
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    IdQuery:
+      name: id
+      in: query
+      required: false
+      description: ID data untuk mengambil satu record.
+      schema:
+        type: integer
+        example: 1
+    IdQueryRequired:
+      name: id
+      in: query
+      required: true
+      description: ID record yang akan diperbarui atau dihapus.
+      schema:
+        type: integer
+        example: 1
+
+  schemas:
+    RegisterRequest:
+      type: object
+      required: [username, email, password]
+      properties:
+        username:
+          type: string
+          example: andi
+        email:
+          type: string
+          format: email
+          example: andi@example.com
+        password:
+          type: string
+          format: password
+          example: rahasia123
+
+    LoginRequest:
+      type: object
+      required: [username, password]
+      properties:
+        username:
+          type: string
+          example: andi
+        password:
+          type: string
+          format: password
+          example: rahasia123
+
+    MahasiswaRequest:
+      type: object
+      required: [nim, nama, email, prodi_id, angkatan]
+      properties:
+        nim:
+          type: string
+          minLength: 9
+          maxLength: 9
+          description: NIM harus tepat 9 karakter sesuai validasi controller.
+          example: E41230002
+        nama:
+          type: string
+          example: Ingka Jivanda
+        email:
+          type: string
+          format: email
+          example: ingka.api@example.com
+        prodi_id:
+          type: integer
+          example: 1
+        angkatan:
+          type: integer
+          example: 2023
+
+    BukuRequest:
+      type: object
+      required: [judul, penulis, tahun_terbit]
+      properties:
+        judul:
+          type: string
+          example: Pemrograman Web
+        penulis:
+          type: string
+          example: Budi Santoso
+        tahun_terbit:
+          type: integer
+          minimum: 1901
+          maximum: 2155
+          example: 2024
+
+    SuccessEnvelope:
+      type: object
+      required: [success, message, data, errors, timestamp]
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Data berhasil diambil
+        data:
+          nullable: true
+          description: Data hasil berupa object, array, atau null.
+        errors:
+          type: array
+          items: {}
+          example: []
+        timestamp:
+          type: string
+          format: date-time
+          example: "2026-11-17T09:00:00+07:00"
+
+    LoginEnvelope:
+      type: object
+      required: [success, message, data, errors, timestamp]
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Login berhasil
+        data:
+          type: object
+          properties:
+            token:
+              type: string
+              description: JWT untuk Authorization Bearer.
+            role:
+              type: string
+              example: user
+            expires_in:
+              type: integer
+              example: 300
+        errors:
+          type: array
+          items: {}
+          example: []
+        timestamp:
+          type: string
+          format: date-time
+
+    ErrorEnvelope:
+      type: object
+      required: [success, message, data, errors, timestamp]
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: Terjadi kesalahan pada request
+        data:
+          nullable: true
+          example: null
+        errors:
+          description: Daftar kesalahan validasi atau detail error.
+          oneOf:
+            - type: object
+              additionalProperties:
+                type: array
+                items:
+                  type: string
+            - type: array
+              items: {}
+        timestamp:
+          type: string
+          format: date-time
