@@ -9,7 +9,7 @@ info:
   version: 1.0.0
 
 servers:
-  - url: http://localhost/BKPM_WEB/Minggu%2011%20acara%2021
+  - url: http://localhost/BKPM_WEB/Minggu%2011%20acara%2022
     description: Server lokal Laragon
 
 tags:

@@ -20,7 +20,7 @@ Folder ini merupakan kelanjutan proyek Acara 21. File aplikasi PHP, database, da
 7. Simpan screenshot tampilan Swagger Editor ke folder `docs/` sebagai bukti praktikum.
 
 ## Base URL
-`http://localhost/BKPM_WEB/Minggu%2011%20acara%2021`
+`http://localhost/BKPM_WEB/Minggu%2011%20acara%2022`
 
 Jika nama folder proyek di komputer berbeda, sesuaikan nilai `servers.url` di `openapi.yaml`.
 
