@@ -1,0 +1,9 @@
+RewriteEngine On
+
+# Teruskan header Authorization (Bearer token) ke PHP
+RewriteCond %{HTTP:Authorization} .
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+# Semua request diarahkan ke folder public/
+RewriteRule ^$ public/ [L]
+RewriteRule ^(?!public/)(.*)$ public/$1 [L]

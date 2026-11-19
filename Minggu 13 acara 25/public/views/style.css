@@ -1,0 +1,37 @@
+* { box-sizing: border-box; }
+body { font-family: Arial, sans-serif; margin: 0; background: #f4f6f8; color: #222; }
+.hidden { display: none !important; }
+
+/* Login */
+.login-box { max-width: 360px; margin: 10vh auto; background: #fff; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,.12); }
+.login-box h1 { margin-top: 0; font-size: 1.4rem; }
+label { display: block; margin: .8rem 0 .25rem; font-size: .9rem; }
+input { width: 100%; padding: 8px 10px; border: 1px solid #bbb; border-radius: 4px; font-size: 1rem; }
+button { padding: 8px 14px; border: 0; border-radius: 4px; cursor: pointer; font-size: .9rem; color: #fff; background: #1565c0; }
+button.sekunder { background: #607d8b; }
+button.bahaya { background: #c62828; }
+button.ubah { background: #ef6c00; }
+.login-box button { width: 100%; margin-top: 1.2rem; padding: 10px; }
+.pesan-form { margin-top: 1rem; padding: 8px 10px; border-radius: 4px; background: #fdecea; color: #b00020; font-size: .9rem; }
+
+/* Dashboard */
+header.bar { display: flex; justify-content: space-between; align-items: center; background: #0d47a1; color: #fff; padding: 12px 24px; }
+header.bar h1 { margin: 0; font-size: 1.15rem; }
+header.bar .kanan { display: flex; align-items: center; gap: 12px; font-size: .9rem; }
+.badge { background: #fff; color: #0d47a1; border-radius: 12px; padding: 2px 10px; font-weight: bold; text-transform: uppercase; font-size: .75rem; }
+main { max-width: 900px; margin: 1.5rem auto; padding: 0 1rem; }
+.kartu { background: #fff; border-radius: 8px; padding: 1rem 1.25rem; box-shadow: 0 1px 4px rgba(0,0,0,.1); margin-bottom: 1.25rem; }
+.ringkasan .angka { font-size: 2.4rem; font-weight: bold; color: #0d47a1; }
+.ringkasan .judul { color: #555; }
+.toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: .75rem; }
+.toolbar h2 { margin: 0; font-size: 1.1rem; }
+table { border-collapse: collapse; width: 100%; background: #fff; }
+th, td { border: 1px solid #ccc; padding: 8px 12px; text-align: left; }
+th { background: #f0f0f0; }
+td.aksi { white-space: nowrap; width: 1%; }
+td.aksi button { margin-right: 4px; }
+.pesan { text-align: center; font-style: italic; }
+.memuat { color: #555; } .kosong { color: #8a6d00; } .error { color: #b00020; }
+#form-mahasiswa { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0 1rem; }
+#form-mahasiswa .penuh { grid-column: 1 / -1; display: flex; gap: 8px; margin-top: 1rem; }
+#form-mahasiswa .penuh button { width: auto; }

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dashboard - Sistem Informasi Akademik</title>
+    <link rel="stylesheet" href="style.css">
+    <script>
+        // Acara 25 - Langkah 4: lindungi halaman. Tanpa token -> kembali ke login.
+        // (Pemeriksaan ini hanya UX; keamanan sebenarnya tetap di backend: Auth::requireAdmin()).
+        if (!localStorage.getItem('token')) {
+            window.location.href = 'login.html';
+        }
+    </script>
+</head>
+<body>
+    <header class="bar">
+        <h1>Dashboard Sistem Informasi Akademik</h1>
+        <div class="kanan">
+            <span>Role: <span class="badge" id="role-aktif">-</span></span>
+            <!-- Tugas mandiri 1: tombol Logout -->
+            <button type="button" class="bahaya" id="btn-logout">Logout</button>
+        </div>
+    </header>
+
+    <main>
+        <!-- Acara 25 - Langkah 5: ringkasan data -->
+        <section class="kartu ringkasan">
+            <div class="angka" id="total-mahasiswa">-</div>
+            <div class="judul">Total Mahasiswa</div>
+        </section>
+
+        <section class="kartu admin-only hidden" id="kartu-form">
+            <div class="toolbar"><h2 id="judul-form">Tambah Mahasiswa</h2></div>
+            <form id="form-mahasiswa">
+                <div><label for="nim">NIM (9 digit)</label><input type="text" id="nim" required></div>
+                <div><label for="nama">Nama</label><input type="text" id="nama" required></div>
+                <div><label for="email">Email</label><input type="email" id="email" required></div>
+                <div><label for="prodi_id">ID Program Studi</label><input type="number" id="prodi_id" min="1" required></div>
+                <div><label for="angkatan">Angkatan</label><input type="number" id="angkatan" min="1" required></div>
+                <div class="penuh">
+                    <button type="submit" id="btn-simpan">Simpan</button>
+                    <button type="button" class="sekunder" id="btn-batal">Batal</button>
+                </div>
+            </form>
+            <div id="pesan-form" class="pesan-form hidden"></div>
+        </section>
+
+        <section class="kartu">
+            <div class="toolbar">
+                <h2>Data Mahasiswa</h2>
+                <!-- Tugas mandiri 2: disembunyikan oleh JavaScript jika role = user -->
+                <button type="button" class="admin-only hidden" id="btn-tambah">+ Tambah</button>
+            </div>
+            <table id="tabel-mahasiswa">
+                <thead>
+                    <tr>
+                        <th>NIM</th><th>Nama</th><th>Program Studi</th>
+                        <th class="admin-only hidden">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </section>
+    </main>
+
+    <script src="config.js"></script>
+    <script src="dashboard.js"></script>
+</body>
+</html>
